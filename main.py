@@ -3,7 +3,7 @@ from time import sleep
 from sys import exit
 from tools import *  # 记得去掉
 import Logger
-
+import traceback
 Steal_Interval = 0.01
 Steal_Ratio = 0.7
 
@@ -29,11 +29,12 @@ def workstation_working():
             if finished:
                 logger.info("Finished All Tasks!")
                 sleep(10000)
-        except:
+        except Exception:
             logger.error("Sth happened...Something was Wrong!!!")
+            traceback.print_exc()
         finally:
             lock.release()
-            sleep(Steal_Interval/40)
+            sleep(Steal_Interval/10)
 
 
 def task_stealing():
@@ -75,7 +76,7 @@ def task_stealing():
             logger.error("Sth happened...Something was Wrong!!!")
         finally:
             lock.release()
-            sleep(Steal_Interval / 40)
+            sleep(Steal_Interval / 10)
 
 
 # Main thread

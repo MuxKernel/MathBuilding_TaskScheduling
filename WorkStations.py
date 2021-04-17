@@ -5,6 +5,8 @@ from random import random
 CPU_Speed = 2.5
 CPU_Reduction = 2
 
+F = 1.1089390193121363794595975343521e-40
+
 
 class WorkStations(object):
     def __init__(self,
@@ -42,24 +44,38 @@ class WorkStations(object):
         for i in tasks:
             time += i.work_load / self.load_capacity
         self.time_remaining = time
-        self.logger.info("Next task:{},Time:{}".format([task.name for task in self.working].__str__(), self.time_remaining))
+        self.logger.info(
+            "Next task:{},Time:{}".format([task.name for task in self.working].__str__(), self.time_remaining))
         return 1  # 成功
+
+    def outage_possibility(self):
+        sum_of_work_load = 0
+        if not self.working:
+            return 0
+        for i in self.working:
+            sum_of_work_load += i.work_load
+
+        q = sum_of_work_load / self.load_capacity
+        return F * (92 * q - 1)
 
     def time_passing(self, interval=1):
         if not self.status:
             return 0
-        if not self.working:
-            self.start_next_task()
-            if not self.working: # 再次判断
+        # 刷新宕机状态
+        self.refresh_outage_status(interval)
+        if not self.working:  # 判断是否正在工作
+            self.start_next_task()  # 如果没在工作 尝试启动（用队列中的任务）这个情况是迁移任务的时候会出现的情况
+            if not self.working:  # 再次判断
                 return 0
         self.time_remaining -= interval
         if self.time_remaining <= interval:  # 粒度更小
             self.time_consuming += self.time_remaining
         else:
             self.time_consuming += interval
-        self.logger.info("Time passed for {} seconds,Current task time left {}".format(interval,self.time_remaining))
+        self.logger.info("Time passed for {} seconds,Current task time left {}".format(interval, self.time_remaining))
         if self.time_remaining < 0:  # 这个任务结束了
-            self.logger.info("Task finished:{},Current_Time:{}".format([task.name for task in self.working].__str__(), self.time_consuming))
+            self.logger.info("Task finished:{},Current_Time:{}".format([task.name for task in self.working].__str__(),
+                                                                       self.time_consuming))
             self.start_next_task()
 
     def refresh_frequency_ratio(self):
@@ -67,16 +83,17 @@ class WorkStations(object):
             return 0
         pass
 
-    def outage_possibility(self):
-        return 0.95
-
-    def refresh_outage_status(self):
-        if random(0, 1) > self.outage_possibility():
+    def refresh_outage_status(self, interval=1):
+        possibility = self.outage_possibility()
+        self.logger.info("Random Possibility:{}".format(str(possibility)))
+        if random() < possibility:
             # 宕机
-            self.status = False
-            self.queue.append(self.working)
-            self.time_remaining = 99999  # Infinity
-            self.logger.warning(
-                "WorkStation {} Stopped Working!(Outage),Current_task:{}".format(self.name, str(self.working)))
+            if random() < interval:
+                # 考虑时间间隔
+                self.logger.warning(
+                    "WorkStation {} Stopped Working!(Outage),Current_task:{}".format(self.name, str(self.working)))
+                self.status = False
+                self.queue.append(self.working)
+                self.time_remaining = 99999  # Infinity
 
-    #TODO：服务器降频
+    # TODO：服务器降频
