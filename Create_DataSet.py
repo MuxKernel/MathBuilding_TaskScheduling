@@ -25,8 +25,8 @@ for i in tasks_list:
         i.limit1 = limit_1
 
 # limit 2
-for i in range(random.randint(8, 12)):
-    limit_2 = random_set(tasks_names, 2, 5)
+for i in range(random.randint(80, 120)):
+    limit_2 = random_set(tasks_names, 5, 10)
     for task in tasks_list:
         if task.name in limit_2:
             temp = copy(limit_2)
@@ -34,8 +34,8 @@ for i in range(random.randint(8, 12)):
             task.limit2 = temp
 
 # limit 3
-for i in range(random.randint(4, 10)):
-    limit_3 = random_set(tasks_names, 1, 3)
+for i in range(random.randint(20, 50)):
+    limit_3 = random_set(tasks_names, 5, 12)
     for task in tasks_list:
         if task.name in limit_3:
             temp = copy(limit_3)
@@ -44,7 +44,7 @@ for i in range(random.randint(4, 10)):
 
 # limit 4
 for j in range(random.randint(7, 12)):
-    limit_4 = random_set(tasks_names, 0, 4)
+    limit_4 = random_set(tasks_names, 10, 40)
     for i in tasks_list:
         if i.name in limit_4:
             i.limit4 = limit_4

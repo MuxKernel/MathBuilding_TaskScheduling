@@ -55,6 +55,8 @@ def initial_deploy(workstation_list: list, tasks_list: list):
         task_list = [i]
         work_load = i.work_load
         for other_tasks in i.limit2:
+            if not tasks_list[other_tasks]:
+                continue
             work_load += tasks_list[other_tasks].work_load  # 并行
             task_list.append(tasks_list[other_tasks])
             tasks_list[other_tasks] = False
