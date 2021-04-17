@@ -49,13 +49,15 @@ def initial_deploy(workstation_list: list, tasks_list: list):
     logger = Logger.getLogger("Tool")  # GetLogger
     logger.info("Starting initial deployment...")
     for i in tasks_list:
+        if not i: # 被去重了
+            continue
         # TODO:并行任务此处还可以优化
         task_list = [i]
         work_load = i.work_load
         for other_tasks in i.limit2:
             work_load += tasks_list[other_tasks].work_load  # 并行
             task_list.append(tasks_list[other_tasks])
-            tasks_list.pop(other_tasks)  # 去重
+            tasks_list[other_tasks] = False
         logger.debug("Total Work_Load of task {}:{}".format(i.name, str(work_load)))
         match_list = [-1, 0]
         for j in workstation_list:

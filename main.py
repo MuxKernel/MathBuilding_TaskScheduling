@@ -98,7 +98,7 @@ if __name__ == '__main__':
     for i in workstation_list:
         log_info = ""
         for task_i in i.queue:
-            log_info += "~"
+            log_info += " "
             for task_j in task_i:
                 log_info += str(task_j.name)
                 log_info += ","
