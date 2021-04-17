@@ -49,7 +49,7 @@ def initial_deploy(workstation_list: list, tasks_list: list):
     logger = Logger.getLogger("Tool")  # GetLogger
     logger.info("Starting initial deployment...")
     for i in tasks_list:
-        if not i: # 被去重了
+        if not i:  # 被去重了
             continue
         # TODO:并行任务此处还可以优化
         task_list = [i]
@@ -177,3 +177,5 @@ def print_complete_map(workstation_list):
                 log_info += str(task_j.name)
                 log_info += ","
         logger.debug("{}<-{}".format(i.name, log_info))  # log:完成情况
+        #TODO:可视化
+        # logger.info("{},".format(i.time_consuming))
