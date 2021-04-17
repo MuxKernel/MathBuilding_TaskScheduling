@@ -1,4 +1,6 @@
 import threading
+from time import sleep
+
 from tools import *  # 记得去掉
 import Logger
 
@@ -34,17 +36,30 @@ def task_stealing():
     while True:
         lock.acquire()
         try:
-            balance, max_workstation, min_workstation = calculate_balance(workstation_list)
-            if balance > Steal_Ratio:
-                steal_status = steal_tasks(workstation_list, max_workstation, min_workstation)
-                if not steal_status:  # 触底了
-                    logger.warning("Cannot steal Tasks ...Retry...(All Tasks)")
-                    balance, max_workstation, min_workstation = calculate_queue_balance(workstation_list)
-                    if balance > Steal_Ratio:
-                        steal_status = steal_tasks(workstation_list, max_workstation, min_workstation)
-                        if not steal_status:  # 再次触底了
+            previous_balance = 1
+            while True:
+                balance, max_workstation, min_workstation, outage = calculate_balance(workstation_list)
+                if balance > previous_balance:  # 不平衡还高了
+                    break
+                if balance > Steal_Ratio:
+                    steal_status = steal_tasks(workstation_list, max_workstation, min_workstation)
+                    if not steal_status:  # 触底了
+                        logger.warning("Cannot steal Tasks ...(All Tasks)")
+                        # balance, max_workstation, min_workstation, outage = calculate_queue_balance(workstation_list)
+                        # if balance > Steal_Ratio:
+                        #     steal_status = steal_tasks(workstation_list, max_workstation, min_workstation)
+                        #     if not steal_status:  # 时间最大的 再次触底了
+                        if outage:  # 宕机就不管了
+                            break
+                        else:
                             logger.error("Cannot steal Tasks...Stealing Thread Exits(Only Queue)")
-                            break  # 说明只剩下整个任务了，没法再偷，线程退出
+                            sleep(10000)
+                            pass  # 终止进程
+                    else:  # 窃取成功
+                        previous_balance = balance
+            if outage:  # 去除宕机的
+                logger.debug("Removing outage workstation...")
+                workstation_list.pop(max_workstation)
         except:
             logger.error("Sth happened...Something was Wrong!!!")
         finally:

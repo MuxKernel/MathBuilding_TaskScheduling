@@ -1,13 +1,30 @@
 # -*- coding:utf-8 -*-
 import Logger
 from Tasks import *
+from WorkStations import *
 
 
 # 获取输入
 def input_information():
     logger = Logger.getLogger("Tool")  # GetLogger
     # 记得初始化name为下标
-    return [], []
+    workstation_list = []
+    tasks_list = []
+    """
+    3
+    
+    5
+    """
+    for i in range(int(input())):
+        command = input().split(',')  # 每一行的命令
+        workstation = WorkStations(int(command[0]), int(command[1]), int(command[2]))
+        workstation_list.append(workstation)
+    del command
+    for i in range(int(input())):
+        command = input().split(',')  # 每一行的命令
+        task = Tasks(int(command[0]), int(command[1]), list(command[2]), list(command[3]), list(command[4]))
+        tasks_list.append(task)
+    return workstation_list, tasks_list
 
 
 '''
@@ -53,7 +70,10 @@ def calculate_balance(workstation_list: list):
     logger.info("Start Calculating balance...")
     max_time = [0, 0]
     min_time = [0, 0]
+    outage = False
     for i in workstation_list:
+        if not i.status:
+            outage = True
         if isinstance(i.working, list):  # 并行处理
             total_work_load = 0
             for task in i.working:
@@ -76,7 +96,7 @@ def calculate_balance(workstation_list: list):
             min_time[1] = time
     logger.debug("balance Output:ratio:", (max_time[1] - min_time[1]) / max_time[1])
     logger.debug("balance Output:WorkStation:Max:{},Min:{}".format(max_time[0], min_time[1]))
-    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1]
+    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1], outage
 
 
 def steal_tasks(workstation_list: list, max_workstation: int, min_workstation: int):
@@ -91,12 +111,16 @@ def steal_tasks(workstation_list: list, max_workstation: int, min_workstation: i
     return 1
 
 
+'''
 def calculate_queue_balance(workstation_list: list):
     logger = Logger.getLogger("Tool")  # GetLogger
     logger.info("Start Calculating balance...")
     max_time = [0, 0]
     min_time = [0, 0]
+    outage = False
     for i in workstation_list:
+        if not i.status:
+            outage = True
         if isinstance(i.working, list):  # 并行处理
             total_work_load = 0
             for task in i.working:
@@ -115,5 +139,6 @@ def calculate_queue_balance(workstation_list: list):
             min_time[1] = time
     logger.debug("Queue balance Output:ratio:", (max_time[1] - min_time[1]) / max_time[1])
     logger.debug("Queue balance Output:WorkStation:Max:{},Min:{}".format(max_time[0], min_time[1]))
-    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1]
-#TODO:把一些任务放在一起运行
+    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1],outage
+'''
+# TODO:把一些任务放在一起运行

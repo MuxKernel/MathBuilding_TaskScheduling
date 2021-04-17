@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import Logger
+from random import random
 
 CPU_Speed = 2.5
 CPU_Reduction = 2
@@ -26,6 +27,8 @@ class WorkStations(object):
         self.logger = Logger.getLogger("WorkStation" + str(self.name))  # GetLogger
 
     def start_next_task(self):
+        if not self.status:
+            return 0
         self.logger.debug("Starting next task...")
         try:
             tasks = self.queue[0]  # 底
@@ -41,6 +44,8 @@ class WorkStations(object):
         return 1  # 成功
 
     def time_passing(self, interval=1):
+        if not self.status:
+            return 0
         self.time_remaining -= interval
         if self.time_remaining < interval:  # 粒度更小
             self.time_consuming += self.time_remaining
@@ -49,3 +54,20 @@ class WorkStations(object):
         if self.time_remaining < 0:  # 这个任务结束了
             self.logger.info("Task finished:{},Current_Time:{}".format(str(self.working), self.time_consuming))
             self.start_next_task()
+
+    def refresh_frequency_ratio(self):
+        if not self.status:
+            return 0
+        pass
+
+    def outage_possibility(self):
+        return 0.95
+
+    def refresh_outage_status(self):
+        if random(0, 1) > self.outage_possibility():
+            # 宕机
+            self.status = False
+            self.queue.append(self.working)
+            self.time_remaining = 99999  # Infinity
+            self.logger.warning(
+                "WorkStation {} Stopped Working!(Outage),Current_task:{}".format(self.name, str(self.working)))
