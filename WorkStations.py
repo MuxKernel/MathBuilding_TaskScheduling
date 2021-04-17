@@ -27,6 +27,7 @@ class WorkStations(object):
         self.working = None  # 正在执行 [] / tasks
         self.queue = []  # 待执行队列
         self.logger = Logger.getLogger("WorkStation" + str(self.name))  # GetLogger
+        self.complete_tasks = []
 
     def start_next_task(self):
         if not self.status:
@@ -76,6 +77,7 @@ class WorkStations(object):
         if self.time_remaining < 0:  # 这个任务结束了
             self.logger.info("Task finished:{},Current_Time:{}".format([task.name for task in self.working].__str__(),
                                                                        self.time_consuming))
+            self.complete_tasks.append(self.working) # 加入完成名单中
             self.start_next_task()
 
     def refresh_frequency_ratio(self):

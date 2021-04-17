@@ -28,6 +28,7 @@ def workstation_working():
             logger.debug("Current Time:" + str(current_time))
             if finished:
                 logger.info("Finished All Tasks!")
+                print_complete_map(workstation_list)
                 sleep(10000)
         except Exception:
             logger.error("Sth happened...Something was Wrong!!!")

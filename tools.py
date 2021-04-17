@@ -150,3 +150,15 @@ def calculate_queue_balance(workstation_list: list):
     return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1],outage
 '''
 # TODO:把一些任务放在一起运行
+
+
+def print_complete_map(workstation_list):
+    logger = Logger.getLogger("Tool")  # GetLogger
+    for i in workstation_list:
+        log_info = ""
+        for task_i in i.complete_tasks:
+            log_info += " "
+            for task_j in task_i:
+                log_info += str(task_j.name)
+                log_info += ","
+        logger.debug("{}<-{}".format(i.name, log_info))  # log:完成情况
