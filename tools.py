@@ -55,7 +55,7 @@ def initial_deploy(workstation_list: list, tasks_list: list):
             task_list.append(tasks_list[other_tasks])
             tasks_list.pop(other_tasks)  # 去重
         logger.debug("Total Work_Load of task {}:{}".format(i.name, str(work_load)))
-        match_list = [0, 0]
+        match_list = [-1, 0]
         for j in workstation_list:
             for banned_workstation in i.limit1:
                 if j.name == banned_workstation:
@@ -66,11 +66,17 @@ def initial_deploy(workstation_list: list, tasks_list: list):
                     logger.debug("Task {} Unable with Banned Task:{}".format(i.name, j.queue))
                     continue
             match_rate = work_load / j.capacity_constraints
+            if match_rate > 1:  # 放不下
+                continue # 换一个工作站
             if match_rate > match_list[1]:  # 更新最新
                 match_list[0] = j.name
                 match_list[1] = match_rate
         # deploy
-        workstation_list[match_list[0]].queue.append(task_list)
+        if match_list[0] == -1: # 没有一个能放下
+            logger.error("No WorkStation can contain Task {}".format([task.name for task in task_list]))
+        else:
+            workstation_list[match_list[0]].queue.append(task_list)
+
     return workstation_list
 
 

@@ -9,9 +9,6 @@ Steal_Ratio = 0.7
 
 lock = threading.Lock()  # 锁
 
-
-# TODO：note!使用线程锁
-
 def workstation_working():
     logger = Logger.getLogger(threading.current_thread().name)  # GetLogger
     logger.info("Started!")
