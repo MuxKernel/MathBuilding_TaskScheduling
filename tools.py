@@ -9,12 +9,13 @@ from WorkStations import *
 1 4 8
 2 2 4
 5
-0 2 [1] [] [4]
-1 3 [] [] []
-2 4 [] [] []
-3 1 [] [4] []
-4 1 [] [] []
+0 15 [1] [] [4]
+1 30 [] [] []
+2 35 [] [] []
+3 10 [] [4] []
+4 8 [] [] []
 """
+
 
 # 获取输入
 def input_information():
@@ -52,7 +53,7 @@ def initial_deploy(workstation_list: list, tasks_list: list):
             work_load += tasks_list[other_tasks].work_load  # 并行
             task_list.append(tasks_list[other_tasks])
             tasks_list.pop(other_tasks)  # 去重
-        logger.debug("Work Load of {} task:{}".format(i.name, work_load))
+        logger.debug("Total Work_Load of task {}:{}".format(i.name, str(work_load)))
         match_list = [0, 0]
         for j in workstation_list:
             for banned_workstation in i.limit1:
@@ -79,31 +80,30 @@ def calculate_balance(workstation_list: list):
     min_time = [0, 0]
     outage = False
     for i in workstation_list:
+        total_work_load = 0
         if not i.status:
             outage = True
-        if isinstance(i.working, list):  # 并行处理
-            total_work_load = 0
+        try:
             for task in i.working:
                 total_work_load += task.work_load
-        elif isinstance(i.working, Tasks):  # 串行处理
-            total_work_load = i.working.work_load
-        else:  # None
-            logger.warning("workstation.working type unexpected!", i.working)
-            total_work_load = 0
-
-        for i_2 in i.queue:  # 加上队列中的时间
-            total_work_load += i_2.work_load
-
+        except TypeError:  # 如果为空
+            pass
+        try:
+            for i_2 in i.queue:  # 加上队列中的时间
+                for i_3 in i_2:
+                    total_work_load += i_3.work_load
+        except TypeError:  # 如果为空
+            pass
         time = total_work_load / i.load_capacity
         if time > max_time[1]:
             max_time[0] = i.name
             max_time[1] = time
-        if time < min_time[1]:
+        if time <= min_time[1]:
             min_time[0] = i.name
             min_time[1] = time
-    logger.debug("balance Output:ratio:", (max_time[1] - min_time[1]) / max_time[1])
-    logger.debug("balance Output:WorkStation:Max:{},Min:{}".format(max_time[0], min_time[1]))
-    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1], outage
+    logger.debug("balance Output:ratio:" + str((max_time[1] - min_time[1]) / max_time[1]))
+    logger.debug("balance Output:WorkStation:Max:{},Min:{}".format(max_time[0], min_time[0]))
+    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[0], outage
 
 
 def steal_tasks(workstation_list: list, max_workstation: int, min_workstation: int):
@@ -113,7 +113,8 @@ def steal_tasks(workstation_list: list, max_workstation: int, min_workstation: i
     except IndexError:
         logger.warning("{} Reached the bottom of Task Queue!".format(workstation_list[max_workstation].name))
         return 0
-    logger.debug("Putting Task {} to WorkStation {}".format(str(task_max), min_workstation))
+    logger.debug("Putting Task {} to WorkStation {}".format([task.name for task in task_max].__str__(),
+                                                            workstation_list[min_workstation].name))
     workstation_list[min_workstation].queue.append(task_max)
     return 1
 
