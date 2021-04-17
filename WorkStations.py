@@ -4,7 +4,7 @@ from random import random
 
 CPU_Speed = 2.5
 CPU_Reduction = 2
-
+CPU_Reduction_Rate = 0.8
 F = 1.1089390193121363794595975343521e-40
 
 
@@ -17,6 +17,7 @@ class WorkStations(object):
                  frequency_ratio=1
                  ):
         self.name = name
+        self.cpu_count = load_capacity
         self.load_capacity = load_capacity * CPU_Speed
         self.frequency_ratio = frequency_ratio
         self.capacity_constraints = capacity_constraints
@@ -47,7 +48,28 @@ class WorkStations(object):
         self.time_remaining = time
         self.logger.info(
             "Next task:{},Time:{}".format([task.name for task in self.working].__str__(), self.time_remaining))
+
+        # 判断是否需要降频
+        self.judge_limit4(self.working)
         return 1  # 成功
+
+    def judge_limit4(self, tasks: list):
+        names = []
+        for i in tasks:
+            names.append(i.name)
+
+        for task in tasks:
+            total_work_load = 0
+            for limits in task.limit4:
+                if limits in names:
+                    total_work_load += task.work_load
+            if total_work_load > self.capacity_constraints * CPU_Reduction_Rate:
+                self.load_capacity = CPU_Reduction * self.cpu_count  # 降频
+                self.logger.debug(
+                    "Cpu Reduced due to capacity of {} which on {}".format(total_work_load, self.capacity_constraints))
+                break
+        else:  # 不降频
+            self.load_capacity = CPU_Speed * self.cpu_count
 
     def outage_possibility(self):
         sum_of_work_load = 0
@@ -77,13 +99,8 @@ class WorkStations(object):
         if self.time_remaining < 0:  # 这个任务结束了
             self.logger.info("Task finished:{},Current_Time:{}".format([task.name for task in self.working].__str__(),
                                                                        self.time_consuming))
-            self.complete_tasks.append(self.working) # 加入完成名单中
+            self.complete_tasks.append(self.working)  # 加入完成名单中
             self.start_next_task()
-
-    def refresh_frequency_ratio(self):
-        if not self.status:
-            return 0
-        pass
 
     def refresh_outage_status(self, interval=1):
         possibility = self.outage_possibility()

@@ -9,11 +9,11 @@ from WorkStations import *
 1 4 8
 2 2 4
 5
-0 15 [1] [] [4]
-1 30 [] [] []
-2 35 [] [] []
-3 10 [] [4] []
-4 8 [] [] []
+0 15 [1] [] [4] [0,1]
+1 30 [] [] [] []
+2 35 [] [] [] []
+3 10 [] [4] [] []
+4 8 [] [] [] []
 """
 
 
@@ -30,7 +30,8 @@ def input_information():
     del command
     for i in range(int(input())):
         command = input().split(' ')  # 每一行的命令
-        task = Tasks(int(command[0]), int(command[1]), eval(command[2]), eval(command[3]), eval(command[4]))
+        task = Tasks(int(command[0]), int(command[1]), eval(command[2]), eval(command[3]), eval(command[4]),
+                     eval(command[5]))
         tasks_list.append(task)
     return workstation_list, tasks_list
 
@@ -149,6 +150,8 @@ def calculate_queue_balance(workstation_list: list):
     logger.debug("Queue balance Output:WorkStation:Max:{},Min:{}".format(max_time[0], min_time[1]))
     return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1],outage
 '''
+
+
 # TODO:把一些任务放在一起运行
 
 
