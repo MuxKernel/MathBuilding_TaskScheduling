@@ -67,7 +67,7 @@ def initial_deploy(workstation_list: list, tasks_list: list):
                 if banned_task in j.queue:
                     logger.debug("Task {} Unable with Banned Task:{}".format(i.name, j.queue))
                     continue
-            match_rate = work_load / j.capacity_constraints
+            match_rate = work_load / j.capacity_constraints - random() / 9  # 随机扰动
             if match_rate > 1:  # 放不下
                 continue  # 换一个工作站
             if match_rate > match_list[1]:  # 更新最新
