@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
-from Tasks import *
 import Logger
+
+CPU_Speed = 2.5
+CPU_Reduction = 2
 
 
 class WorkStations(object):
@@ -9,9 +11,11 @@ class WorkStations(object):
                  load_capacity: int,  # CPU速度
                  capacity_constraints: int,  # 内存 在一个指定的区间内
                  status: bool = True,
+                 frequency_ratio=1
                  ):
         self.name = name
-        self.load_capacity = load_capacity
+        self.load_capacity = load_capacity * CPU_Speed
+        self.frequency_ratio = frequency_ratio
         self.capacity_constraints = capacity_constraints
         self.status = status
         self.available_capacity = capacity_constraints  # 剩余内存
@@ -36,10 +40,12 @@ class WorkStations(object):
         self.logger.info("Next task:{},Time:{}".format(str(self.working), self.time_remaining))
         return 1  # 成功
 
-    def time_passing(self):
-        self.time_remaining -= 1
-        self.time_consuming += 1
-        if not self.time_remaining:  # 这个任务结束了
+    def time_passing(self, interval=1):
+        self.time_remaining -= interval
+        if self.time_remaining < interval:  # 粒度更小
+            self.time_consuming += self.time_remaining
+        else:
+            self.time_consuming += interval
+        if self.time_remaining < 0:  # 这个任务结束了
             self.logger.info("Task finished:{},Current_Time:{}".format(str(self.working), self.time_consuming))
             self.start_next_task()
-
