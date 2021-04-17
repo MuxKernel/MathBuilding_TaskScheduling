@@ -25,14 +25,16 @@ def input_information():
     tasks_list = []
     for i in range(int(input())):
         command = input().split(' ')  # 每一行的命令
-        workstation = WorkStations(int(command[0]), int(command[1]), int(command[2]))
+        workstation = WorkStations(int(command[0]), int(command[1]), float(command[2]))
         workstation_list.append(workstation)
+        # print(workstation)
     del command
     for i in range(int(input())):
         command = input().split(' ')  # 每一行的命令
-        task = Tasks(int(command[0]), int(command[1]), eval(command[2]), eval(command[3]), eval(command[4]),
+        task = Tasks(int(command[0]), float(command[1]), eval(command[2]), eval(command[3]), eval(command[4]),
                      eval(command[5]))
         tasks_list.append(task)
+        # print(task)
     return workstation_list, tasks_list
 
 
@@ -67,12 +69,12 @@ def initial_deploy(workstation_list: list, tasks_list: list):
                     continue
             match_rate = work_load / j.capacity_constraints
             if match_rate > 1:  # 放不下
-                continue # 换一个工作站
+                continue  # 换一个工作站
             if match_rate > match_list[1]:  # 更新最新
                 match_list[0] = j.name
                 match_list[1] = match_rate
         # deploy
-        if match_list[0] == -1: # 没有一个能放下
+        if match_list[0] == -1:  # 没有一个能放下
             logger.error("No WorkStation can contain Task {}".format([task.name for task in task_list]))
         else:
             workstation_list[match_list[0]].queue.append(task_list)

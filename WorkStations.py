@@ -12,7 +12,7 @@ class WorkStations(object):
     def __init__(self,
                  name: int,
                  load_capacity: int,  # CPU核数
-                 capacity_constraints: int,  # 内存 在一个指定的区间内
+                 capacity_constraints: float,  # 内存 在一个指定的区间内
                  status: bool = True,
                  frequency_ratio=1
                  ):
