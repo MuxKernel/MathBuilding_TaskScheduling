@@ -2,25 +2,25 @@ import threading
 import time
 from tools import *  # 记得去掉
 import Logger
-
-logger = Logger.getLogger("Main")
-logger.error("wtf")
-
-
+# TODO：note!使用线程锁
 
 def sever_working():
-    for i in range(5):
-        print(threading.current_thread().name + ' test ', i)
-        time.sleep(1)
+    logger = Logger.getLogger(threading.current_thread().name)  # GetLogger
+    logger.info("Started!")
 
 
 def task_stealing():
-    pass
+    logger = Logger.getLogger(threading.current_thread().name)  # GetLogger
+    logger.info("Started!")
 
 
-thread = threading.Thread(target=sever_working, name='TestThread')
-thread.start()
+# Main thread
+if __name__ == '__main__':
+    # 启动线程
+    WorkingThread = threading.Thread(target=sever_working, name='WorkingThread')
+    StealingThread = threading.Thread(target=task_stealing, name='StealingThread')
+    WorkingThread.start()
+    StealingThread.start()
 
-for i in range(5):
-    print(threading.current_thread().name + ' main ', i)
-    time.sleep(1)
+
+

@@ -2,7 +2,7 @@
 import logging
 
 # https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
-FORMAT = "%(asctime)s - [$BOLD%(name)-s$RESET][%(levelname)-19s]($BOLD%(filename)s$RESET;$BOLD%(funcName)s$RESET:%(lineno)d): %(message)s "
+FORMAT = "%(asctime)s - [$BOLD%(name)-s$RESET][%(levelname)-s]($BOLD%(filename)s$RESET;$BOLD%(funcName)s$RESET:%(lineno)d): %(message)s "
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 # The background is set with 40 plus the number of the color, and the foreground with 30
 # These are the sequences need to get colored ouput
