@@ -9,7 +9,7 @@ CPU_Reduction = 2
 class WorkStations(object):
     def __init__(self,
                  name: int,
-                 load_capacity: int,  # CPU速度
+                 load_capacity: int,  # CPU核数
                  capacity_constraints: int,  # 内存 在一个指定的区间内
                  status: bool = True,
                  frequency_ratio=1
@@ -40,7 +40,7 @@ class WorkStations(object):
         for i in tasks:
             time += i.work_load / self.load_capacity
         self.time_remaining = time
-        self.logger.info("Next task:{},Time:{}".format(str(self.working), self.time_remaining))
+        self.logger.info("Next task:{},Time:{}".format(str(self.working.name), self.time_remaining))
         return 1  # 成功
 
     def time_passing(self, interval=1):
@@ -52,7 +52,7 @@ class WorkStations(object):
         else:
             self.time_consuming += interval
         if self.time_remaining < 0:  # 这个任务结束了
-            self.logger.info("Task finished:{},Current_Time:{}".format(str(self.working), self.time_consuming))
+            self.logger.info("Task finished:{},Current_Time:{}".format(str(self.working.name), self.time_consuming))
             self.start_next_task()
 
     def refresh_frequency_ratio(self):
@@ -71,3 +71,5 @@ class WorkStations(object):
             self.time_remaining = 99999  # Infinity
             self.logger.warning(
                 "WorkStation {} Stopped Working!(Outage),Current_task:{}".format(self.name, str(self.working)))
+
+    #TODO：服务器降频

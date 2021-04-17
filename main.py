@@ -76,7 +76,7 @@ if __name__ == '__main__':
     main_logger.info("Child Threads Created Successfully!")
 
     main_logger.info("Reading Information...")
-    tasks_list, workstation_list = input_information()
+    workstation_list,tasks_list = input_information()
     main_logger.debug("Tasks:", tasks_list)
     main_logger.debug("Tasks Count:", len(tasks_list))
     main_logger.debug("WorkStations:", workstation_list)

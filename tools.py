@@ -3,6 +3,18 @@ import Logger
 from Tasks import *
 from WorkStations import *
 
+"""
+3
+0 4 4
+1 4 8
+2 2 4
+5
+0 2 [1] [] [4]
+1 3 [] [] []
+2 4 [] [] []
+3 1 [] [4] []
+4 1 [] [] []
+"""
 
 # 获取输入
 def input_information():
@@ -10,19 +22,14 @@ def input_information():
     # 记得初始化name为下标
     workstation_list = []
     tasks_list = []
-    """
-    3
-    
-    5
-    """
     for i in range(int(input())):
-        command = input().split(',')  # 每一行的命令
+        command = input().split(' ')  # 每一行的命令
         workstation = WorkStations(int(command[0]), int(command[1]), int(command[2]))
         workstation_list.append(workstation)
     del command
     for i in range(int(input())):
-        command = input().split(',')  # 每一行的命令
-        task = Tasks(int(command[0]), int(command[1]), list(command[2]), list(command[3]), list(command[4]))
+        command = input().split(' ')  # 每一行的命令
+        task = Tasks(int(command[0]), int(command[1]), eval(command[2]), eval(command[3]), eval(command[4]))
         tasks_list.append(task)
     return workstation_list, tasks_list
 
@@ -39,12 +46,12 @@ def initial_deploy(workstation_list: list, tasks_list: list):
     logger.info("Starting initial deployment...")
     for i in tasks_list:
         # TODO:并行任务此处还可以优化
-        task_list = [i.name]
+        task_list = [i]
         work_load = i.work_load
         for other_tasks in i.limit2:
             work_load += tasks_list[other_tasks].work_load  # 并行
-            task_list.append(other_tasks.name)
-            tasks_list.pop(other_tasks.name)  # 去重
+            task_list.append(tasks_list[other_tasks])
+            tasks_list.pop(other_tasks)  # 去重
         logger.debug("Work Load of {} task:{}".format(i.name, work_load))
         match_list = [0, 0]
         for j in workstation_list:
