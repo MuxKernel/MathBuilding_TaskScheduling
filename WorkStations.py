@@ -100,7 +100,7 @@ class WorkStations(object):
         if self.time_remaining < 0:  # 这个任务结束了
             self.logger.info("Task finished:{},Current_Time:{}".format([task.name for task in self.working].__str__(),
                                                                        self.time_consuming))
-            self.complete_tasks.append(self.current_all_time)  # 加入完成名单中
+            self.complete_tasks.append(self.working)  # 加入完成名单中
             self.start_next_task()
 
     def refresh_outage_status(self, interval=1):
