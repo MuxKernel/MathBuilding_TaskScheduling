@@ -21,3 +21,4 @@
 运行main.py，复制数据集粘贴到控制台中
 
 修改日志等级在Logger.py的51行中
+修改时间粒度在main.py中的变量定义：Steal_Interval = 0.01
