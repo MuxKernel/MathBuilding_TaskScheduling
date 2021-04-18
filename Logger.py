@@ -3,7 +3,6 @@ import logging
 
 # https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 FORMAT = "%(asctime)s - [$BOLD%(name)-s$RESET][%(levelname)-s]($BOLD%(filename)s$RESET;$BOLD%(funcName)s$RESET:%(lineno)d): %(message)s "
-#TODO:可视化
 # FORMAT = "%(message)s "
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)

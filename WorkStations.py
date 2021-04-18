@@ -22,13 +22,13 @@ class WorkStations(object):
         self.frequency_ratio = frequency_ratio
         self.capacity_constraints = capacity_constraints
         self.status = status
-        self.available_capacity = capacity_constraints  # 剩余内存
         self.time_consuming = 0  # 运行时间
         self.time_remaining = 0  # 当前任务运行剩余时间
         self.working = None  # 正在执行 [] / tasks
         self.queue = []  # 待执行队列
         self.logger = Logger.getLogger("WorkStation" + str(self.name))  # GetLogger
         self.complete_tasks = []
+        self.current_all_time = 0
 
     def start_next_task(self):
         if not self.status:
@@ -46,6 +46,7 @@ class WorkStations(object):
         for i in tasks:
             time += i.work_load / self.load_capacity
         self.time_remaining = time
+        self.current_all_time = time
         self.logger.info(
             "Next task:{},Time:{}".format([task.name for task in self.working].__str__(), self.time_remaining))
 
@@ -99,7 +100,7 @@ class WorkStations(object):
         if self.time_remaining < 0:  # 这个任务结束了
             self.logger.info("Task finished:{},Current_Time:{}".format([task.name for task in self.working].__str__(),
                                                                        self.time_consuming))
-            self.complete_tasks.append(self.working)  # 加入完成名单中
+            self.complete_tasks.append(self.current_all_time)  # 加入完成名单中
             self.start_next_task()
 
     def refresh_outage_status(self, interval=1):

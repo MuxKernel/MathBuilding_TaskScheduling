@@ -71,7 +71,7 @@ def initial_deploy(workstation_list: list, tasks_list: list):
                 if banned_task in j.queue:
                     logger.debug("Task {} Unable with Banned Task:{}".format(i.name, j.queue))
                     continue
-            match_rate = work_load / j.capacity_constraints - random() / 9  # 随机扰动
+            match_rate = work_load / j.capacity_constraints - random() / 8  # 随机扰动
             if match_rate > 1:  # 放不下
                 continue  # 换一个工作站
             if match_rate > match_list[1]:  # 更新最新
@@ -132,41 +132,6 @@ def steal_tasks(workstation_list: list, max_workstation: int, min_workstation: i
     return 1
 
 
-'''
-def calculate_queue_balance(workstation_list: list):
-    logger = Logger.getLogger("Tool")  # GetLogger
-    logger.info("Start Calculating balance...")
-    max_time = [0, 0]
-    min_time = [0, 0]
-    outage = False
-    for i in workstation_list:
-        if not i.status:
-            outage = True
-        if isinstance(i.working, list):  # 并行处理
-            total_work_load = 0
-            for task in i.working:
-                total_work_load += task.work_load
-        elif isinstance(i.working, Tasks):  # 串行处理
-            total_work_load = i.working.work_load
-        else:  # None
-            logger.warning("workstation.working type unexpected!", i.working)
-            total_work_load = 0
-        time = total_work_load / i.load_capacity
-        if time > max_time[1]:
-            max_time[0] = i.name
-            max_time[1] = time
-        if time < min_time[1]:
-            min_time[0] = i.name
-            min_time[1] = time
-    logger.debug("Queue balance Output:ratio:", (max_time[1] - min_time[1]) / max_time[1])
-    logger.debug("Queue balance Output:WorkStation:Max:{},Min:{}".format(max_time[0], min_time[1]))
-    return (max_time[1] - min_time[1]) / max_time[1], max_time[0], min_time[1],outage
-'''
-
-
-# TODO:把一些任务放在一起运行
-
-
 def print_complete_map(workstation_list):
     logger = Logger.getLogger("Tool")  # GetLogger
     for i in workstation_list:
@@ -177,5 +142,5 @@ def print_complete_map(workstation_list):
                 log_info += str(task_j.name)
                 log_info += ","
         logger.debug("{}<-{}".format(i.name, log_info))  # log:完成情况
-        #TODO:可视化
-        # logger.info("{},".format(i.time_consuming))
+
+        # logger.info("{},".format([each for each in i.complete_tasks].__str__()))

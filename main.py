@@ -54,10 +54,6 @@ def task_stealing():
                     steal_status = steal_tasks(workstation_list, max_workstation, min_workstation)
                     if not steal_status:  # 触底了
                         logger.warning("Cannot steal Tasks ...(All Tasks)")
-                        # balance, max_workstation, min_workstation, outage = calculate_queue_balance(workstation_list)
-                        # if balance > Steal_Ratio:
-                        #     steal_status = steal_tasks(workstation_list, max_workstation, min_workstation)
-                        #     if not steal_status:  # 时间最大的 再次触底了
                         if outage:  # 宕机就不管了
                             break
                         else:
@@ -104,6 +100,6 @@ if __name__ == '__main__':
                 log_info += ","
         main_logger.debug("{}<-{}".format(i.name, log_info))  # log:第一次部署的情况
         i.start_next_task()
-
+    sleep(Steal_Interval)
     main_logger.info("Starting Child Threads...")
     WorkingThread.start()
